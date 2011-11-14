@@ -8,45 +8,9 @@
 
 #import "Battery.h"
 
-
-@interface PGBattery(PrivateMethods)
-- (void) updateOnlineStatus;
-@end
-
 @implementation PGBattery
 
 @synthesize state, level, callbackId;
-
-
-/*  determining type of event occurs on JavaScript side
-- (void) updateBatteryLevel:(NSNotification*)notification
-{
-    // send batterylow event for less than 25% battery
-    // send batterycritical  event for less than 10% battery
-    // W3c says to send batteryStatus event when batterylevel changes by more than 1% (iOS seems to notify each 5%)
-    // always update the navigator.device.battery info
-    float currentLevel = [[UIDevice currentDevice] batteryLevel];
-    NSString* type = @"";
-    // no check for level == -1 since this api is only called when monitoring is enabled so level should be valid
-    if (currentLevel < 0.10){
-        type = @"batterycritical";
-    } else if (currentLevel < 0.25) {
-        type = @"batterylow";
-    } else {
-        float onePercent = 0.1;
-        if (self.level >= 0 ){
-            onePercent = self.level * 0.01;
-        }
-        if (fabsf(currentLevel - self.level) > onePercent){
-            // issue batteryStatus event
-            type = @"batterystatus";
-        }
-    }
-    // update the battery info and fire event
-    NSString* jsString = [NSString stringWithFormat:@"navigator.device.battery._status(\"%@\", %@)", type,[[self getBatteryStatus] JSONRepresentation]];
-    [super writeJavascript:jsString];
-}
- */
 
 - (void) updateBatteryStatus: (NSNotification*)notification
 {
@@ -58,6 +22,7 @@
     }
        
 }
+
 /* Get the current battery status and level.  Status will be unknown and level will be -1.0 if 
  * monitoring is turned off.
  */
