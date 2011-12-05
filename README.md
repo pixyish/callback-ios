@@ -158,7 +158,7 @@ Starting with version 1.1, when creating a new project, the weak-linking is adde
 
 **7. How do I override the location of the start page www/index.html?** 
 
-You can override it by copy and pasting these [functions](https://github.com/phonegap/phonegap-iphone/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L48-56) into your project's AppDelegate.m, and make the appropriate changes.
+You can override it by copy and pasting these [functions 'wwwFolderName' and 'startPage'](https://github.com/callback/callback-ios/blob/master/PhoneGapLib/Classes/PhoneGapDelegate.m#L88-96) into your project's AppDelegate.m, and make the appropriate changes.
 
 **8. What's the difference between the Xcode 3 and Xcode 4 templates?**
 
@@ -189,6 +189,9 @@ A. Older pre-1.0 issues have been put in the [PhoneGap iOS FAQ](http://wiki.phon
 
 A. You must delete the *~ipad.png images from **Capture.bundle** if they want to build an iPhone only app and have captureAudio() display properly on an iPad. This additional fix is just for iPad running iOS 3.2 - if the requested *~ipad.png is not available it returns the iPhone sized image.  
 
+**13. I get this linker error: "ld: warning: ignoring file libPhoneGap.a, file was built for archive which is not the architecture being linked (armv7)"** 
+
+A. In your project's Build Settings, set **"Build for Active Architecture Only"** to **NO**. This has been fixed in PhoneGap 1.2 for newly created projects. This is usually because Xcode 4 will only build for armv7 by default, and not armv6.
 
 BUGS?
 -----

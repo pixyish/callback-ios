@@ -8,6 +8,7 @@
  */
 
 #import "FileTransfer.h"
+#import "File.h"
 
 
 @implementation PGFileTransfer
@@ -62,7 +63,10 @@
     }
     
     if(errorCode > 0) {
-        result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: INVALID_URL_ERR cast: @"navigator.fileTransfer._castTransferError"];
+        //result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: INVALID_URL_ERR cast: @"navigator.fileTransfer._castTransferError"];
+        
+        result = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: [self createFileTransferError:[NSString stringWithFormat:@"%d", errorCode] AndSource:filePath AndTarget:server]];
+        
         [self writeJavascript:[result toErrorCallbackString:callbackId]];
         return;
     }
@@ -129,9 +133,95 @@
 	FileTransferDelegate* delegate = [[[FileTransferDelegate alloc] init] autorelease];
 	delegate.command = self;
     delegate.callbackId = callbackId;
+    delegate.source = server;
+    delegate.target = filePath;
 	
 	[NSURLConnection connectionWithRequest:req delegate:delegate];
     
+}
+
+- (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSLog(@"File Transfer downloading file...");
+    
+    [self performSelectorInBackground:@selector(downloadFile:) withObject:arguments];
+}
+
+-(void) downloadFile:(NSMutableArray*)arguments {
+    NSString * callbackId = [arguments objectAtIndex:0];
+    NSString * sourceUrl = [arguments objectAtIndex:1];
+    NSString * filePath = [arguments objectAtIndex:2];
+    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSData* data = [NSData dataWithContentsOfURL: [NSURL URLWithString:sourceUrl] ];
+    NSArray * results = nil;
+    
+    NSLog(@"Write file %@", filePath);
+    NSError *error=[[[NSError alloc]init] autorelease];
+    
+    @try {
+        NSString * parentPath = [ filePath stringByDeletingLastPathComponent ];
+        
+        // check if the path exists => create directories if needed
+        if(![[NSFileManager defaultManager] fileExistsAtPath:parentPath ]) [[NSFileManager defaultManager] createDirectoryAtPath:parentPath withIntermediateDirectories:YES attributes:nil error:nil];
+        
+    	BOOL response = [data writeToFile:filePath options:NSDataWritingFileProtectionNone error:&error];
+        
+        if ( response == NO ) {
+        	// send our results back to the main thread
+            results = [NSArray arrayWithObjects: callbackId, [NSString stringWithFormat:@"%d", INVALID_URL_ERR], sourceUrl, filePath, nil];
+        	[self performSelectorOnMainThread:@selector(downloadFail:) withObject:results waitUntilDone:YES];
+    	} else {
+        	// jump back to main thread
+            results = [NSArray arrayWithObjects: callbackId, filePath, nil];
+        	[self performSelectorOnMainThread:@selector(downloadSuccess:) withObject:results waitUntilDone:YES];
+    	}
+    }
+    @catch (id exception) {
+        // jump back to main thread
+        results = [NSArray arrayWithObjects: callbackId, [NSString stringWithFormat:@"%d", FILE_NOT_FOUND_ERR], sourceUrl, filePath, nil];
+        [self performSelectorOnMainThread:@selector(downloadFail:) withObject:results waitUntilDone:YES];
+    }
+    
+    [pool drain];
+}
+
+-(void) downloadSuccess:(NSMutableArray *)arguments 
+{
+    NSString * callbackId = [arguments objectAtIndex:0];
+    NSString * filePath = [arguments objectAtIndex:1];
+
+    BOOL bDirRequest = NO;
+
+    NSLog(@"File Transfert Download success");
+    
+    PGFile * file = [[PGFile alloc] init];
+    
+    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsDictionary: [file getDirectoryEntry: filePath isDirectory: bDirRequest] cast: @"window.localFileSystem._castEntry"];
+    [self writeJavascript: [result toSuccessCallbackString:callbackId]];
+}
+
+-(void) downloadFail:(NSMutableArray *)arguments 
+{
+    NSString * callbackId = [arguments objectAtIndex:0];
+    NSString * code = [arguments objectAtIndex:1];
+    NSString * source = [arguments objectAtIndex:2];
+    NSString * target = [arguments objectAtIndex:3];
+
+    NSLog(@"File Transfer Error: %@", source);
+    
+    PluginResult* pluginResult = [PluginResult resultWithStatus:PGCommandStatus_OK messageAsDictionary: [self createFileTransferError:code AndSource:source AndTarget:target]];
+                                    
+    [self writeJavascript: [pluginResult toErrorCallbackString:callbackId]];
+}
+
+-(NSMutableDictionary*) createFileTransferError:(NSString*)code AndSource:(NSString*)source AndTarget:(NSString*)target
+{
+    NSMutableDictionary* result = [NSMutableDictionary dictionaryWithCapacity:3];
+    [result setObject: code forKey:@"code"];
+	[result setObject: source forKey:@"source"];
+	[result setObject: target forKey:@"target"];
+    
+    return result;
 }
 
 @end
@@ -139,7 +229,7 @@
 
 @implementation FileTransferDelegate
 
-@synthesize callbackId, responseData, command, bytesWritten;
+@synthesize callbackId, source, target, responseData, command, bytesWritten;
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection 
@@ -157,7 +247,7 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error 
 {
-    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsInt: CONNECTION_ERR cast: @"navigator.fileTransfer._castTransferError"];
+    PluginResult* result = [PluginResult resultWithStatus: PGCommandStatus_OK messageAsDictionary: [command createFileTransferError: [NSString stringWithFormat: @"%d", CONNECTION_ERR] AndSource:source AndTarget:target]];
     NSLog(@"File Transfer Error: %@", [error localizedDescription]);
     [command writeJavascript:[result toErrorCallbackString: callbackId]];
 }

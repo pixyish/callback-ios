@@ -21,21 +21,31 @@ typedef int FileTransferError;
 @interface PGFileTransfer : PGPlugin {
     
 }
-- (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
+- (void) upload:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) download:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
+-(void) downloadFile:(NSMutableArray*)arguments;
+-(void) downloadSuccess:(NSMutableArray*)arguments; 
+-(void) downloadFail:(NSMutableArray*)arguments; 
+
+-(NSMutableDictionary*) createFileTransferError:(NSString*)code AndSource:(NSString*)source AndTarget:(NSString*)target;
 @end
 
 
 @interface FileTransferDelegate : NSObject {
 	PGFileTransfer* command;
 	NSString* callbackId;
+	NSString* source;
+	NSString* target;
     NSInteger bytesWritten;
-    
 }
 
 @property (nonatomic, retain) NSMutableData* responseData;
 @property (nonatomic, retain) PGFileTransfer* command;
 @property (nonatomic, retain) NSString* callbackId;
+@property (nonatomic, retain) NSString* source;
+@property (nonatomic, retain) NSString* target;
 @property NSInteger bytesWritten;
 
 
