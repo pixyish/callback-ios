@@ -24,4 +24,5 @@
 - (void) start:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 - (void)dealloc;
+
 @end

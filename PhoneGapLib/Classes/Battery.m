@@ -28,7 +28,6 @@
  */
 - (NSDictionary*) getBatteryStatus
 {
-    
     UIDevice* currentDevice = [UIDevice currentDevice];
     UIDeviceBatteryState currentState = [currentDevice batteryState];
     
@@ -36,10 +35,10 @@
     if (currentState == UIDeviceBatteryStateCharging || currentState == UIDeviceBatteryStateFull) {
         isPlugged = TRUE;
     }
+    
     float currentLevel = [currentDevice batteryLevel];
     
     if (currentLevel != self.level || currentState != self.state) {
-        
         self.level = currentLevel;
         self.state = currentState;
     }
@@ -52,9 +51,11 @@
     else {
         w3cLevel = [NSNumber numberWithFloat:(currentLevel*100)];
     }
+    
     NSMutableDictionary* batteryData = [NSMutableDictionary dictionaryWithCapacity:2];
     [batteryData setObject: [NSNumber numberWithBool: isPlugged] forKey:@"isPlugged"];
     [batteryData setObject: w3cLevel forKey:@"level"];
+    
     return batteryData;
 }
 
@@ -63,12 +64,15 @@
 {
     self.callbackId = [arguments objectAtIndex:0];
     
-    if ( [UIDevice currentDevice].batteryMonitoringEnabled == NO) {
+    if ([UIDevice currentDevice].batteryMonitoringEnabled == NO) {
         [[UIDevice currentDevice] setBatteryMonitoringEnabled:YES];
+
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateBatteryStatus:) 
 												 name:UIDeviceBatteryStateDidChangeNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateBatteryStatus:) 
 												 name:UIDeviceBatteryLevelDidChangeNotification object:nil];
+                                                 
+        [self updateBatteryStatus:NULL];
 	}
 	
 }
@@ -82,11 +86,11 @@
         [super writeJavascript:[result toSuccessCallbackString:self.callbackId]];
     }
     self.callbackId = nil;
+    
     [[UIDevice currentDevice] setBatteryMonitoringEnabled:NO];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceBatteryStateDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceBatteryLevelDidChangeNotification object:nil];
-    
-	
 }
 
 - (PGPlugin*) initWithWebView:(UIWebView*)theWebView

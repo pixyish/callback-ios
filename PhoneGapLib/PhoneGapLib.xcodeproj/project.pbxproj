@@ -152,6 +152,8 @@
 		88BA573E109BB46F00FB5E78 /* Accelerometer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88BA573C109BB46F00FB5E78 /* Accelerometer.m */; };
 		C937A4561337599E002C4C79 /* FileTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = C937A4541337599E002C4C79 /* FileTransfer.h */; };
 		C937A4571337599E002C4C79 /* FileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = C937A4551337599E002C4C79 /* FileTransfer.m */; };
+		CE803B5D148CEC04000946A6 /* Battery.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F2BECBE13F9785B00A93BF6 /* Battery.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE803B5F148CEC14000946A6 /* Battery.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F2BECBF13F9785B00A93BF6 /* Battery.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -469,6 +471,7 @@
 				303259B0136B326300982B63 /* DebugConsole.h in Headers */,
 				303259B1136B326300982B63 /* File.h in Headers */,
 				303259B3136B326300982B63 /* InvokedUrlCommand.h in Headers */,
+				CE803B5D148CEC04000946A6 /* Battery.h in Headers */,
 				303259BC136B326300982B63 /* Location.h in Headers */,
 				303259BF136B326300982B63 /* Notification.h in Headers */,
 				303259C0136B326300982B63 /* NSData+Base64.h in Headers */,
@@ -505,6 +508,7 @@
 				8887FD741090FBE7009987E8 /* InvokedUrlCommand.h in Headers */,
 				8887FD851090FBE7009987E8 /* Location.h in Headers */,
 				8887FD8D1090FBE7009987E8 /* Notification.h in Headers */,
+				1F2BECC013F9785B00A93BF6 /* Battery.h in Headers */,
 				8887FD8F1090FBE7009987E8 /* NSData+Base64.h in Headers */,
 				8887FD991090FBE7009987E8 /* PhoneGapDelegate.h in Headers */,
 				8887FD9B1090FBE7009987E8 /* PhoneGapViewController.h in Headers */,
@@ -521,7 +525,6 @@
 				302965BC13A94E9D007046C5 /* PGDebug.h in Headers */,
 				30B39EBE13D0268B0009682A /* PGSplashScreen.h in Headers */,
 				30E563CF13E217EC00C949AA /* NSMutableArray+QueueAdditions.h in Headers */,
-				1F2BECC013F9785B00A93BF6 /* Battery.h in Headers */,
 				30C684801406CB38004C1A8E /* PGWhitelist.h in Headers */,
 				30C684941407044B004C1A8E /* PGURLProtocol.h in Headers */,
 				30356214141049E1006C2D43 /* PGWhitelistTests.h in Headers */,
@@ -711,6 +714,7 @@
 				30A9DFEB13A7EBC1009AA950 /* PGPlugin.m in Sources */,
 				30383DE01385F65600E37E22 /* Connection.m in Sources */,
 				30325990136B325100982B63 /* Camera.m in Sources */,
+				CE803B5F148CEC14000946A6 /* Battery.m in Sources */,
 				30325991136B325100982B63 /* Categories.m in Sources */,
 				30325992136B325100982B63 /* Contacts.m in Sources */,
 				30325993136B325100982B63 /* DebugConsole.m in Sources */,
@@ -754,6 +758,7 @@
 				8887FD671090FBE7009987E8 /* Camera.m in Sources */,
 				8887FD691090FBE7009987E8 /* Categories.m in Sources */,
 				8887FD6B1090FBE7009987E8 /* Contacts.m in Sources */,
+				1F2BECC113F9785B00A93BF6 /* Battery.m in Sources */,
 				8887FD6D1090FBE7009987E8 /* DebugConsole.m in Sources */,
 				8887FD711090FBE7009987E8 /* File.m in Sources */,
 				8887FD751090FBE7009987E8 /* InvokedUrlCommand.m in Sources */,
@@ -774,7 +779,6 @@
 				30E33AF313A7E24B00594D64 /* PGPlugin.m in Sources */,
 				30B39EBF13D0268B0009682A /* PGSplashScreen.m in Sources */,
 				30E563D013E217EC00C949AA /* NSMutableArray+QueueAdditions.m in Sources */,
-				1F2BECC113F9785B00A93BF6 /* Battery.m in Sources */,
 				30C684821406CB38004C1A8E /* PGWhitelist.m in Sources */,
 				30C684961407044B004C1A8E /* PGURLProtocol.m in Sources */,
 				30A90B9314588697006178D3 /* JSONKit.m in Sources */,
